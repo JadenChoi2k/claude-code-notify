@@ -1,8 +1,30 @@
-# claude-code-notify
+<h1 align="center">claude-code-notify</h1>
+<p align="center"><strong>Desktop notifications for Claude Code. Two scripts. One command. Done.</strong></p>
+<p align="center">
+  <img src="https://img.shields.io/github/license/JadenChoi2k/claude-code-notify?style=flat-square" alt="License">
+  <img src="https://img.shields.io/github/stars/JadenChoi2k/claude-code-notify?style=flat-square" alt="Stars">
+  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey?style=flat-square" alt="Platform">
+  <img src="https://img.shields.io/badge/dependencies-zero-green?style=flat-square" alt="Dependencies">
+  <img src="https://img.shields.io/github/actions/workflow/status/JadenChoi2k/claude-code-notify/shellcheck.yml?label=shellcheck&style=flat-square" alt="ShellCheck">
+</p>
 
-Get native desktop notifications when [Claude Code](https://docs.anthropic.com/en/docs/claude-code) finishes responding or needs your input.
+<!-- TODO: uncomment when demo.gif is recorded
+<p align="center">
+  <img src="assets/demo.gif" alt="Demo" width="600">
+</p>
+-->
 
-Never miss when a long-running task completes or when Claude asks for permission — hear a sound and see a clickable notification with project context.
+## Quick install
+
+```bash
+# Install terminal-notifier (recommended, macOS)
+brew install terminal-notifier
+
+# Install hooks — that's it
+curl -fsSL https://raw.githubusercontent.com/JadenChoi2k/claude-code-notify/main/install.sh | bash
+```
+
+Restart Claude Code. You're done.
 
 ## What you get
 
@@ -20,21 +42,15 @@ Example notifications:
 
 > **Claude Code [my-project]** — _Claude needs permission to run Bash_
 
-## Quick install
+## Why this one?
 
-```bash
-# Install terminal-notifier (recommended, macOS)
-brew install terminal-notifier
-
-# Install hooks
-curl -fsSL https://raw.githubusercontent.com/JadenChoi2k/claude-code-notify/main/install.sh | bash
-```
-
-This will:
-1. Download `notify.sh` and `notify-prompt.sh` to `~/.claude/scripts/`
-2. Add `Stop` and `Notification` hooks to `~/.claude/settings.json`
-
-> **Note**: terminal-notifier is optional. The scripts fall back to `osascript` if it's not installed, but you'll miss out on clickable notifications and grouping.
+| | claude-code-notify | claude-notifications-go | CCNotify |
+|---|---|---|---|
+| Install | `curl \| bash` | Download binary | VS Code only |
+| Dependencies | None (bash + python3) | Go binary (~8 MB) | VS Code extension |
+| Click to focus | Yes | No | Yes (VS Code) |
+| Notification grouping | Yes | No | N/A |
+| Total size | ~3 KB | ~8 MB | Extension |
 
 ## Manual install
 
@@ -156,6 +172,18 @@ terminal-notifier ... -activate "net.kovidgoyal.kitty"
 - **Linux**: `notify-send` (usually pre-installed) and optionally `pulseaudio-utils` for sound
 - **Python 3**: Used to parse JSON payload (pre-installed on most systems)
 
+## Roadmap
+
+- [ ] Auto-detect terminal app (Ghostty, iTerm2, Kitty)
+- [ ] Elapsed time in completion notification
+- [ ] Do Not Disturb awareness (macOS)
+- [ ] Custom sound via environment variable
+- [ ] WSL support
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
 ## License
 
-MIT
+[MIT](LICENSE)
