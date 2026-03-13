@@ -1,20 +1,21 @@
 # claude-code-notify
 
-Get native desktop notifications when [Claude Code](https://docs.anthropic.com/en/docs/claude-code) finishes responding.
+Get native desktop notifications when [Claude Code](https://docs.anthropic.com/en/docs/claude-code) finishes responding or needs your input.
 
-Never miss when a long-running task completes — hear a sound and see a notification with the project name and a summary of what Claude said.
+Never miss when a long-running task completes or when Claude asks a question — hear a sound and see a notification with project context.
 
 ## What you get
 
-- **Sound alert** when Claude finishes responding
-- **Desktop notification** with project name and response summary
+- **Response complete** — Sound + notification when Claude finishes (via `Stop` hook)
+- **Input needed** — Different sound + notification when Claude needs permission or asks a question (via `Notification` hook)
+- **Project context** — Shows the project name and a summary in every notification
 - Works with **macOS** (osascript) and **Linux** (notify-send)
 
-Example notification:
+Example notifications:
 
-> **Claude Code [my-project]**
->
-> Fixed the authentication bug in login.ts...
+> **Claude Code [my-project]** — _Fixed the authentication bug in login.ts..._
+
+> **Claude Code [my-project]** — _Claude needs permission to run Bash_
 
 ## Quick install
 
@@ -23,20 +24,20 @@ curl -fsSL https://raw.githubusercontent.com/JadenChoi2k/claude-code-notify/main
 ```
 
 This will:
-1. Download `notify.sh` to `~/.claude/scripts/`
-2. Add a `Stop` hook to `~/.claude/settings.json`
+1. Download `notify.sh` and `notify-prompt.sh` to `~/.claude/scripts/`
+2. Add `Stop` and `Notification` hooks to `~/.claude/settings.json`
 
 ## Manual install
 
-1. Copy `notify.sh` to `~/.claude/scripts/`:
+1. Copy scripts to `~/.claude/scripts/`:
 
 ```bash
 mkdir -p ~/.claude/scripts
-cp notify.sh ~/.claude/scripts/notify.sh
-chmod +x ~/.claude/scripts/notify.sh
+cp notify.sh notify-prompt.sh ~/.claude/scripts/
+chmod +x ~/.claude/scripts/notify.sh ~/.claude/scripts/notify-prompt.sh
 ```
 
-2. Add the hook to `~/.claude/settings.json`:
+2. Add hooks to `~/.claude/settings.json`:
 
 ```json
 {
@@ -47,6 +48,17 @@ chmod +x ~/.claude/scripts/notify.sh
           {
             "type": "command",
             "command": "~/.claude/scripts/notify.sh"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt|elicitation_dialog",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/notify-prompt.sh"
           }
         ]
       }
@@ -65,13 +77,15 @@ curl -fsSL https://raw.githubusercontent.com/JadenChoi2k/claude-code-notify/main
 
 Or manually:
 ```bash
-rm ~/.claude/scripts/notify.sh
-# Then remove the "Stop" hook from ~/.claude/settings.json
+rm ~/.claude/scripts/notify.sh ~/.claude/scripts/notify-prompt.sh
+# Then remove the "Stop" and "Notification" hooks from ~/.claude/settings.json
 ```
 
 ## How it works
 
-Claude Code fires a [`Stop` hook](https://docs.anthropic.com/en/docs/claude-code/hooks) every time it finishes responding. The hook receives a JSON payload on stdin containing:
+### `notify.sh` — Stop hook
+
+Fires every time Claude finishes responding. Receives a JSON payload on stdin:
 
 | Field | Description |
 |---|---|
@@ -79,23 +93,37 @@ Claude Code fires a [`Stop` hook](https://docs.anthropic.com/en/docs/claude-code
 | `last_assistant_message` | Claude's last response text |
 | `session_id` | Session identifier |
 
-The script extracts the project name from `cwd` and truncates the last response to show as the notification body.
+Shows the project name (from `cwd`) and a truncated summary of the last response.
+
+### `notify-prompt.sh` — Notification hook
+
+Fires when Claude needs user input. Matches `permission_prompt` and `elicitation_dialog` events. Receives:
+
+| Field | Description |
+|---|---|
+| `cwd` | Current working directory |
+| `notification_type` | Type of notification (`permission_prompt`, `elicitation_dialog`) |
+| `message` | Description of what Claude needs |
+
+Uses a different sound (Ping) to distinguish from response-complete notifications (Glass).
 
 ## Customization
 
-### Change the sound (macOS)
+### Change the sounds (macOS)
 
-Edit `~/.claude/scripts/notify.sh` and change the sound file:
+Edit the scripts in `~/.claude/scripts/` and change the sound files:
 
 ```bash
 # Available sounds in /System/Library/Sounds/
-afplay /System/Library/Sounds/Ping.aiff &
+afplay /System/Library/Sounds/Glass.aiff &   # notify.sh (response complete)
+afplay /System/Library/Sounds/Ping.aiff &    # notify-prompt.sh (input needed)
 ```
 
-### Change the sound (Linux)
+### Change the sounds (Linux)
 
 ```bash
-paplay /usr/share/sounds/freedesktop/stereo/message.oga &
+paplay /usr/share/sounds/freedesktop/stereo/complete.oga &            # notify.sh
+paplay /usr/share/sounds/freedesktop/stereo/dialog-information.oga &  # notify-prompt.sh
 ```
 
 ## Requirements

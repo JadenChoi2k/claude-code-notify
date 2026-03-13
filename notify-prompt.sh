@@ -1,51 +1,48 @@
 #!/bin/bash
 #
-# Claude Code Stop Hook — Desktop Notification
+# Claude Code Notification Hook — Prompt Notification
 # https://github.com/JadenChoi2k/claude-code-notify
 #
-# Sends a native desktop notification with project context
-# when Claude Code finishes responding.
+# Fires when Claude Code needs user input (permission request, question, etc.)
 #
 # Supported: macOS (osascript), Linux (notify-send)
 #
 
 INPUT=$(cat)
 
-# Parse hook payload
+# Parse notification type and message
 eval "$(echo "$INPUT" | python3 -c "
 import sys, json, os
 
 d = json.load(sys.stdin)
 cwd = d.get('cwd', '')
-msg = d.get('last_assistant_message', '')
+msg = d.get('message', '')
 
-# Project name from working directory
 project = os.path.basename(cwd) if cwd else 'Unknown'
 
-# First line of last response, truncated to 50 chars
-first_line = msg.strip().split('\n')[0] if msg else ''
-if len(first_line) > 50:
-    first_line = first_line[:47] + '...'
+# Truncate message
+if len(msg) > 60:
+    msg = msg[:57] + '...'
 
 # Escape double quotes for shell safety
 project = project.replace('\"', '\\\\\"')
-first_line = first_line.replace('\"', '\\\\\"')
+msg = msg.replace('\"', '\\\\\"')
 
 print(f'PROJECT=\"{project}\"')
-print(f'SUMMARY=\"{first_line}\"')
+print(f'MSG=\"{msg}\"')
 " 2>/dev/null)"
 
 TITLE="Claude Code [$PROJECT]"
-BODY="${SUMMARY:-Response complete}"
+BODY="${MSG:-Waiting for your response}"
 
 case "$(uname)" in
   Darwin)
-    afplay /System/Library/Sounds/Glass.aiff &
+    afplay /System/Library/Sounds/Ping.aiff &
     osascript -e "display notification \"$BODY\" with title \"$TITLE\""
     ;;
   Linux)
     notify-send "$TITLE" "$BODY" 2>/dev/null
-    paplay /usr/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null &
+    paplay /usr/share/sounds/freedesktop/stereo/dialog-information.oga 2>/dev/null &
     ;;
   *)
     echo "Unsupported OS: $(uname)" >&2

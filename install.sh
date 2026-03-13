@@ -10,59 +10,71 @@ set -e
 
 SCRIPT_DIR="$HOME/.claude/scripts"
 SETTINGS_FILE="$HOME/.claude/settings.json"
-SCRIPT_URL="https://raw.githubusercontent.com/JadenChoi2k/claude-code-notify/main/notify.sh"
+BASE_URL="https://raw.githubusercontent.com/JadenChoi2k/claude-code-notify/main"
 
 echo "Installing claude-code-notify..."
 
 # Create scripts directory
 mkdir -p "$SCRIPT_DIR"
 
-# Download notify script
-curl -fsSL "$SCRIPT_URL" -o "$SCRIPT_DIR/notify.sh"
-chmod +x "$SCRIPT_DIR/notify.sh"
+# Download scripts
+curl -fsSL "$BASE_URL/notify.sh" -o "$SCRIPT_DIR/notify.sh"
+curl -fsSL "$BASE_URL/notify-prompt.sh" -o "$SCRIPT_DIR/notify-prompt.sh"
+chmod +x "$SCRIPT_DIR/notify.sh" "$SCRIPT_DIR/notify-prompt.sh"
 
-echo "✓ Script installed to $SCRIPT_DIR/notify.sh"
+echo "✓ Scripts installed to $SCRIPT_DIR/"
 
-# Add hook to settings.json
+# Add hooks to settings.json
 if [ ! -f "$SETTINGS_FILE" ]; then
   echo '{}' > "$SETTINGS_FILE"
 fi
 
-# Check if Stop hook already exists
-if python3 -c "
-import json
-with open('$SETTINGS_FILE') as f:
-    d = json.load(f)
-if 'hooks' in d and 'Stop' in d['hooks']:
-    exit(1)
-" 2>/dev/null; then
-  # Add Stop hook to settings
-  python3 -c "
+python3 -c "
 import json
 
 with open('$SETTINGS_FILE') as f:
     settings = json.load(f)
 
 settings.setdefault('hooks', {})
-settings['hooks']['Stop'] = [
-    {
-        'hooks': [
-            {
-                'type': 'command',
-                'command': '$SCRIPT_DIR/notify.sh'
-            }
-        ]
-    }
-]
+
+if 'Stop' not in settings['hooks']:
+    settings['hooks']['Stop'] = [
+        {
+            'hooks': [
+                {
+                    'type': 'command',
+                    'command': '$SCRIPT_DIR/notify.sh'
+                }
+            ]
+        }
+    ]
+    print('✓ Stop hook added')
+else:
+    print('⚠ Stop hook already exists — skipping')
+
+if 'Notification' not in settings['hooks']:
+    settings['hooks']['Notification'] = [
+        {
+            'matcher': 'permission_prompt|elicitation_dialog',
+            'hooks': [
+                {
+                    'type': 'command',
+                    'command': '$SCRIPT_DIR/notify-prompt.sh'
+                }
+            ]
+        }
+    ]
+    print('✓ Notification hook added')
+else:
+    print('⚠ Notification hook already exists — skipping')
 
 with open('$SETTINGS_FILE', 'w') as f:
     json.dump(settings, f, indent=2, ensure_ascii=False)
 "
-  echo "✓ Stop hook added to $SETTINGS_FILE"
-else
-  echo "⚠ Stop hook already exists in $SETTINGS_FILE — skipping"
-fi
 
 echo ""
-echo "Done! You'll now get desktop notifications when Claude Code finishes responding."
+echo "Done! You'll now get desktop notifications when Claude Code:"
+echo "  • Finishes responding (Glass sound)"
+echo "  • Needs your input (Ping sound)"
+echo ""
 echo "Restart Claude Code for changes to take effect."
