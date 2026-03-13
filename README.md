@@ -8,6 +8,8 @@
   <img src="https://img.shields.io/github/actions/workflow/status/JadenChoi2k/claude-code-notify/shellcheck.yml?label=shellcheck&style=flat-square" alt="ShellCheck">
 </p>
 
+<p align="center">🌏 <strong>English</strong> | <a href="README.ko.md">한국어</a></p>
+
 <!-- TODO: uncomment when demo.gif is recorded
 <p align="center">
   <img src="assets/demo.gif" alt="Demo" width="600">
