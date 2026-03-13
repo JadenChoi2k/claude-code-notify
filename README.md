@@ -6,11 +6,10 @@ Never miss when a long-running task completes or when Claude asks for permission
 
 ## What you get
 
-- **Response complete** (`Stop` hook) — Glass sound + notification with response summary
-- **Input needed** (`Notification` hook) — Ping sound + notification when Claude needs permission or asks a question
+- **Response complete** (`Stop` hook) — System sound + notification with response summary
+- **Input needed** (`Notification` hook) — System sound + notification when Claude needs permission
 - **Project context** — Every notification shows the current project name
 - **Clickable notifications** — Click to jump back to your terminal (via [terminal-notifier](https://github.com/julienXX/terminal-notifier))
-- **Smart focus detection** — Skips notifications when your terminal is already focused (macOS)
 - **Notification grouping** — No spam; new notifications replace previous ones per category
 - **Graceful fallback** — Falls back to `osascript` if terminal-notifier is not installed
 - Works with **macOS** and **Linux**
@@ -115,18 +114,19 @@ Fires when Claude needs user input. Matches `permission_prompt` and `elicitation
 | `notification_type` | Type of notification |
 | `message` | Description of what Claude needs |
 
-Uses a different sound (Ping vs Glass) and notification group to distinguish from completion notifications.
+Uses a separate notification group to distinguish from completion notifications.
 
 ## Customization
 
-### Change the sounds (macOS)
+### Sound
 
-Edit the scripts in `~/.claude/scripts/`:
+Both scripts use `-sound default` (system notification sound). To change it:
 
 ```bash
-# Available sounds in /System/Library/Sounds/
-afplay /System/Library/Sounds/Glass.aiff &   # notify.sh (response complete)
-afplay /System/Library/Sounds/Ping.aiff &    # notify-prompt.sh (input needed)
+# Use a specific macOS sound
+terminal-notifier ... -sound Glass
+
+# Available: Basso, Blow, Bottle, Frog, Funk, Glass, Hero, Morse, Ping, Pop, Purr, Sosumi, Submarine, Tink
 ```
 
 ### Terminal app activation

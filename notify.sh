@@ -11,14 +11,6 @@
 
 INPUT=$(cat)
 
-# macOS: skip notification if a terminal app is focused
-if [ "$(uname)" = "Darwin" ]; then
-  FRONTMOST=$(osascript -e 'tell application "System Events" to get name of first application process whose frontmost is true' 2>/dev/null)
-  case "$FRONTMOST" in
-    Terminal|iTerm2|ghostty|kitty|Alacritty|WezTerm|Hyper) exit 0 ;;
-  esac
-fi
-
 # Parse hook payload
 eval "$(echo "$INPUT" | python3 -c "
 import sys, json, os
@@ -48,11 +40,10 @@ BODY="${SUMMARY:-Response complete}"
 
 case "$(uname)" in
   Darwin)
-    afplay /System/Library/Sounds/Glass.aiff &
     if command -v terminal-notifier &>/dev/null; then
-      terminal-notifier -title "$TITLE" -message "$BODY" -sound "" -group "claude-code-stop" -activate "com.apple.Terminal"
+      terminal-notifier -title "$TITLE" -message "$BODY" -sound default -group "claude-code-stop" -activate "com.apple.Terminal"
     else
-      osascript -e "display notification \"$BODY\" with title \"$TITLE\""
+      osascript -e "display notification \"$BODY\" with title \"$TITLE\" sound name \"default\""
     fi
     ;;
   Linux)
