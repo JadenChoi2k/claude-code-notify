@@ -10,11 +10,9 @@
 
 <p align="center">🌏 <a href="README.md">English</a> | <strong>한국어</strong></p>
 
-<!-- TODO: uncomment when demo.gif is recorded
 <p align="center">
-  <img src="assets/demo.gif" alt="Demo" width="600">
+  <img src="assets/demo.png" alt="Demo — 터미널 출력이 데스크톱 알림을 트리거" width="600">
 </p>
--->
 
 ## 빠른 설치
 

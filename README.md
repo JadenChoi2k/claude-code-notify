@@ -10,11 +10,9 @@
 
 <p align="center">🌏 <strong>English</strong> | <a href="README.ko.md">한국어</a></p>
 
-<!-- TODO: uncomment when demo.gif is recorded
 <p align="center">
-  <img src="assets/demo.gif" alt="Demo" width="600">
+  <img src="assets/demo.png" alt="Demo — terminal output triggers desktop notifications" width="600">
 </p>
--->
 
 ## Quick install
 
