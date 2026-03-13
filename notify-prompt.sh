@@ -10,6 +10,14 @@
 
 INPUT=$(cat)
 
+# macOS: skip notification if a terminal app is focused
+if [ "$(uname)" = "Darwin" ]; then
+  FRONTMOST=$(osascript -e 'tell application "System Events" to get name of first application process whose frontmost is true' 2>/dev/null)
+  case "$FRONTMOST" in
+    Terminal|iTerm2|ghostty|kitty|Alacritty|WezTerm|Hyper) exit 0 ;;
+  esac
+fi
+
 # Parse notification type and message
 eval "$(echo "$INPUT" | python3 -c "
 import sys, json, os

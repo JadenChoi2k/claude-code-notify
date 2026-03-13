@@ -10,6 +10,7 @@ Never miss when a long-running task completes or when Claude asks for permission
 - **Input needed** (`Notification` hook) — Ping sound + notification when Claude needs permission or asks a question
 - **Project context** — Every notification shows the current project name
 - **Clickable notifications** — Click to jump back to your terminal (via [terminal-notifier](https://github.com/julienXX/terminal-notifier))
+- **Smart focus detection** — Skips notifications when your terminal is already focused (macOS)
 - **Notification grouping** — No spam; new notifications replace previous ones per category
 - **Graceful fallback** — Falls back to `osascript` if terminal-notifier is not installed
 - Works with **macOS** and **Linux**
