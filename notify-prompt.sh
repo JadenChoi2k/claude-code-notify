@@ -5,7 +5,7 @@
 #
 # Fires when Claude Code needs user input (permission request, question, etc.)
 #
-# Supported: macOS (osascript), Linux (notify-send)
+# Supported: macOS (terminal-notifier / osascript), Linux (notify-send)
 #
 
 INPUT=$(cat)
@@ -38,7 +38,11 @@ BODY="${MSG:-Waiting for your response}"
 case "$(uname)" in
   Darwin)
     afplay /System/Library/Sounds/Ping.aiff &
-    osascript -e "display notification \"$BODY\" with title \"$TITLE\""
+    if command -v terminal-notifier &>/dev/null; then
+      terminal-notifier -title "$TITLE" -message "$BODY" -sound "" -group "claude-code-prompt" -activate "com.apple.Terminal"
+    else
+      osascript -e "display notification \"$BODY\" with title \"$TITLE\""
+    fi
     ;;
   Linux)
     notify-send "$TITLE" "$BODY" 2>/dev/null

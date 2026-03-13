@@ -6,7 +6,7 @@
 # Sends a native desktop notification with project context
 # when Claude Code finishes responding.
 #
-# Supported: macOS (osascript), Linux (notify-send)
+# Supported: macOS (terminal-notifier / osascript), Linux (notify-send)
 #
 
 INPUT=$(cat)
@@ -41,7 +41,11 @@ BODY="${SUMMARY:-Response complete}"
 case "$(uname)" in
   Darwin)
     afplay /System/Library/Sounds/Glass.aiff &
-    osascript -e "display notification \"$BODY\" with title \"$TITLE\""
+    if command -v terminal-notifier &>/dev/null; then
+      terminal-notifier -title "$TITLE" -message "$BODY" -sound "" -group "claude-code-stop" -activate "com.apple.Terminal"
+    else
+      osascript -e "display notification \"$BODY\" with title \"$TITLE\""
+    fi
     ;;
   Linux)
     notify-send "$TITLE" "$BODY" 2>/dev/null

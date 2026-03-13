@@ -24,6 +24,14 @@ chmod +x "$SCRIPT_DIR/notify.sh" "$SCRIPT_DIR/notify-prompt.sh"
 
 echo "✓ Scripts installed to $SCRIPT_DIR/"
 
+# Check for terminal-notifier
+if command -v terminal-notifier &>/dev/null; then
+  echo "✓ terminal-notifier detected"
+else
+  echo "⚠ terminal-notifier not found — falling back to osascript"
+  echo "  For clickable notifications, run: brew install terminal-notifier"
+fi
+
 # Add hooks to settings.json
 if [ ! -f "$SETTINGS_FILE" ]; then
   echo '{}' > "$SETTINGS_FILE"
