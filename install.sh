@@ -24,12 +24,22 @@ chmod +x "$SCRIPT_DIR/notify.sh" "$SCRIPT_DIR/notify-prompt.sh"
 
 echo "✓ Scripts installed to $SCRIPT_DIR/"
 
-# Check for terminal-notifier
-if command -v terminal-notifier &>/dev/null; then
-  echo "✓ terminal-notifier detected"
-else
-  echo "⚠ terminal-notifier not found — falling back to osascript"
-  echo "  For clickable notifications, run: brew install terminal-notifier"
+# Platform detection
+if grep -qi microsoft /proc/version 2>/dev/null; then
+  echo "✓ WSL detected — notifications will appear as Windows toast notifications"
+elif [ "$(uname)" = "Darwin" ]; then
+  if command -v terminal-notifier &>/dev/null; then
+    echo "✓ terminal-notifier detected"
+  else
+    echo "⚠ terminal-notifier not found — falling back to osascript"
+    echo "  For clickable notifications, run: brew install terminal-notifier"
+  fi
+elif [ "$(uname)" = "Linux" ]; then
+  if command -v notify-send &>/dev/null; then
+    echo "✓ notify-send detected"
+  else
+    echo "⚠ notify-send not found — install libnotify for desktop notifications"
+  fi
 fi
 
 # Add hooks to settings.json

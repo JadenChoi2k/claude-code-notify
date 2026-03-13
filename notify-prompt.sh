@@ -5,7 +5,7 @@
 #
 # Fires when Claude Code needs user input (permission request, question, etc.)
 #
-# Supported: macOS (terminal-notifier / osascript), Linux (notify-send)
+# Supported: macOS (terminal-notifier / osascript), Linux (notify-send), WSL (Windows toast)
 #
 
 INPUT=$(cat)
@@ -44,8 +44,22 @@ case "$(uname)" in
     fi
     ;;
   Linux)
-    notify-send "$TITLE" "$BODY" 2>/dev/null
-    paplay /usr/share/sounds/freedesktop/stereo/dialog-information.oga 2>/dev/null &
+    if grep -qi microsoft /proc/version 2>/dev/null; then
+      # WSL → Windows toast notification via powershell.exe
+      powershell.exe -NoProfile -Command "
+        [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
+        [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom, ContentType = WindowsRuntime] | Out-Null
+        \$xml = \"<toast><visual><binding template='ToastGeneric'><text>$TITLE</text><text>$BODY</text></binding></visual></toast>\"
+        \$doc = [Windows.Data.Xml.Dom.XmlDocument]::new(); \$doc.LoadXml(\$xml)
+        [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('Claude Code').Show(
+          [Windows.UI.Notifications.ToastNotification]::new(\$doc)
+        )
+      " 2>/dev/null
+      powershell.exe -NoProfile -Command "[System.Media.SystemSounds]::Asterisk.Play()" 2>/dev/null
+    else
+      notify-send "$TITLE" "$BODY" 2>/dev/null
+      paplay /usr/share/sounds/freedesktop/stereo/dialog-information.oga 2>/dev/null &
+    fi
     ;;
   *)
     echo "Unsupported OS: $(uname)" >&2

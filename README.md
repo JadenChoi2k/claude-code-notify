@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/github/license/JadenChoi2k/claude-code-notify?style=flat-square" alt="License">
   <img src="https://img.shields.io/github/stars/JadenChoi2k/claude-code-notify?style=flat-square" alt="Stars">
-  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey?style=flat-square" alt="Platform">
+  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey?style=flat-square" alt="Platform">
   <img src="https://img.shields.io/badge/dependencies-zero-green?style=flat-square" alt="Dependencies">
   <img src="https://img.shields.io/github/actions/workflow/status/JadenChoi2k/claude-code-notify/shellcheck.yml?label=shellcheck&style=flat-square" alt="ShellCheck">
 </p>
@@ -16,12 +16,20 @@
 
 ## Quick install
 
+### macOS / Linux / WSL
+
 ```bash
 # Install terminal-notifier (recommended, macOS)
 brew install terminal-notifier
 
 # Install hooks — that's it
 curl -fsSL https://raw.githubusercontent.com/JadenChoi2k/claude-code-notify/main/install.sh | bash
+```
+
+### Windows (PowerShell)
+
+```powershell
+irm https://raw.githubusercontent.com/JadenChoi2k/claude-code-notify/main/install.ps1 | iex
 ```
 
 Restart Claude Code. You're done.
@@ -34,7 +42,7 @@ Restart Claude Code. You're done.
 - **Clickable notifications** — Click to jump back to your terminal (via [terminal-notifier](https://github.com/julienXX/terminal-notifier))
 - **Notification grouping** — No spam; new notifications replace previous ones per category
 - **Graceful fallback** — Falls back to `osascript` if terminal-notifier is not installed
-- Works with **macOS** and **Linux**
+- Works with **macOS**, **Linux**, **WSL**, and **Windows** (native PowerShell)
 
 Example notifications:
 
@@ -46,11 +54,12 @@ Example notifications:
 
 | | claude-code-notify | claude-notifications-go | CCNotify |
 |---|---|---|---|
-| Install | `curl \| bash` | Download binary | VS Code only |
+| Install | `curl \| bash` or `irm \| iex` | Download binary | VS Code only |
 | Dependencies | None (bash + python3) | Go binary (~8 MB) | VS Code extension |
+| Windows support | Yes (WSL + native PowerShell) | No | No |
 | Click to focus | Yes | No | Yes (VS Code) |
 | Notification grouping | Yes | No | N/A |
-| Total size | ~3 KB | ~8 MB | Extension |
+| Total size | ~5 KB | ~8 MB | Extension |
 
 ## Manual install
 
@@ -170,7 +179,9 @@ terminal-notifier ... -activate "net.kovidgoyal.kitty"
 
 - **macOS**: [terminal-notifier](https://github.com/julienXX/terminal-notifier) (recommended) or built-in `osascript`
 - **Linux**: `notify-send` (usually pre-installed) and optionally `pulseaudio-utils` for sound
-- **Python 3**: Used to parse JSON payload (pre-installed on most systems)
+- **WSL**: `powershell.exe` (available by default in WSL)
+- **Windows**: PowerShell 5.1+ (built-in) or PowerShell 7+ (`pwsh`)
+- **Python 3**: Used to parse JSON payload in bash scripts (pre-installed on most systems)
 
 ## Roadmap
 
@@ -178,7 +189,8 @@ terminal-notifier ... -activate "net.kovidgoyal.kitty"
 - [ ] Elapsed time in completion notification
 - [ ] Do Not Disturb awareness (macOS)
 - [ ] Custom sound via environment variable
-- [ ] WSL support
+- [x] WSL support
+- [x] Native Windows (PowerShell) support
 
 ## Contributing
 

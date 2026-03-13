@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/github/license/JadenChoi2k/claude-code-notify?style=flat-square" alt="License">
   <img src="https://img.shields.io/github/stars/JadenChoi2k/claude-code-notify?style=flat-square" alt="Stars">
-  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey?style=flat-square" alt="Platform">
+  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey?style=flat-square" alt="Platform">
   <img src="https://img.shields.io/badge/dependencies-zero-green?style=flat-square" alt="Dependencies">
   <img src="https://img.shields.io/github/actions/workflow/status/JadenChoi2k/claude-code-notify/shellcheck.yml?label=shellcheck&style=flat-square" alt="ShellCheck">
 </p>
@@ -16,12 +16,20 @@
 
 ## 빠른 설치
 
+### macOS / Linux / WSL
+
 ```bash
 # terminal-notifier 설치 (권장, macOS)
 brew install terminal-notifier
 
 # 훅 설치 — 이게 끝
 curl -fsSL https://raw.githubusercontent.com/JadenChoi2k/claude-code-notify/main/install.sh | bash
+```
+
+### Windows (PowerShell)
+
+```powershell
+irm https://raw.githubusercontent.com/JadenChoi2k/claude-code-notify/main/install.ps1 | iex
 ```
 
 Claude Code를 재시작하면 끝.
@@ -34,7 +42,7 @@ Claude Code를 재시작하면 끝.
 - **클릭하면 터미널로 이동** — 알림 클릭 시 터미널로 바로 전환 ([terminal-notifier](https://github.com/julienXX/terminal-notifier) 사용)
 - **알림 그룹핑** — 같은 카테고리의 이전 알림을 교체해서 스팸 방지
 - **자동 폴백** — terminal-notifier가 없으면 `osascript`로 자동 전환
-- **macOS**와 **Linux** 지원
+- **macOS**, **Linux**, **WSL**, **Windows** (네이티브 PowerShell) 지원
 
 알림 예시:
 
@@ -46,11 +54,12 @@ Claude Code를 재시작하면 끝.
 
 | | claude-code-notify | claude-notifications-go | CCNotify |
 |---|---|---|---|
-| 설치 방법 | `curl \| bash` | 바이너리 다운로드 | VS Code 전용 |
+| 설치 방법 | `curl \| bash` 또는 `irm \| iex` | 바이너리 다운로드 | VS Code 전용 |
 | 의존성 | 없음 (bash + python3) | Go 바이너리 (~8 MB) | VS Code 확장 |
+| Windows 지원 | Yes (WSL + 네이티브 PowerShell) | No | No |
 | 클릭하면 포커스 | Yes | No | Yes (VS Code) |
 | 알림 그룹핑 | Yes | No | N/A |
-| 전체 크기 | ~3 KB | ~8 MB | Extension |
+| 전체 크기 | ~5 KB | ~8 MB | Extension |
 
 ## 수동 설치
 
@@ -170,7 +179,9 @@ terminal-notifier ... -activate "net.kovidgoyal.kitty"
 
 - **macOS**: [terminal-notifier](https://github.com/julienXX/terminal-notifier) (권장) 또는 내장 `osascript`
 - **Linux**: `notify-send` (보통 기본 설치됨) + 사운드를 위한 `pulseaudio-utils` (선택)
-- **Python 3**: JSON 페이로드 파싱에 사용 (대부분의 시스템에 기본 설치됨)
+- **WSL**: `powershell.exe` (WSL에서 기본 사용 가능)
+- **Windows**: PowerShell 5.1+ (기본 내장) 또는 PowerShell 7+ (`pwsh`)
+- **Python 3**: bash 스크립트에서 JSON 페이로드 파싱에 사용 (대부분의 시스템에 기본 설치됨)
 
 ## 로드맵
 
@@ -178,7 +189,8 @@ terminal-notifier ... -activate "net.kovidgoyal.kitty"
 - [ ] 완료 알림에 소요 시간 표시
 - [ ] 방해 금지 모드 인식 (macOS)
 - [ ] 환경 변수로 사운드 커스터마이징
-- [ ] WSL 지원
+- [x] WSL 지원
+- [x] 네이티브 Windows (PowerShell) 지원
 
 ## 기여하기
 
